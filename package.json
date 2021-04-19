@@ -5,8 +5,8 @@
   "repository": {
     "url": "https://github.com/cardboardrobots/pipeline"
   },
-  "main": "dist/src/index.js",
-  "typings": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "start": "tsc",
     "test": "npm run lint && npm run unit",
