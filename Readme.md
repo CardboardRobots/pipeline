@@ -1,1 +1,1 @@
-@sjohnsonaz/query-string
+@cardboardrobots/pipeline
