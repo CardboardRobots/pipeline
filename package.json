@@ -1,6 +1,6 @@
 {
   "name": "@cardboardrobots/pipeline",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pipeline middleware runner",
   "repository": {
     "url": "https://github.com/cardboardrobots/pipeline"
