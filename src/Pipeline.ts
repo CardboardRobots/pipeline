@@ -4,7 +4,8 @@ import { Middleware, MiddlewareContext, MiddlewareReturn } from './Middleware';
 /**
  * The `Pipeline` class runs a series of `Middleware` async functions.
  */
-export class Pipeline<CONTEXT = Record<string, unknown>, VALUE = undefined, RESULT = void> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export class Pipeline<CONTEXT = {}, VALUE = void, NEXTCONTEXT = CONTEXT, RESULT = VALUE> {
     middlewares: Middleware<any, any, any>[] = [];
 
     async run(context: CONTEXT, value: VALUE): Promise<Directive<RESULT>> {
@@ -25,13 +26,13 @@ export class Pipeline<CONTEXT = Record<string, unknown>, VALUE = undefined, RESU
      * Adds a `Middleware` function to the `Pipeline`
      * @param middleware - a `Middleware` function to add
      */
-    use<NEWCONTEXT, NEWRESULT = RESULT>(
-        middleware: Middleware<CONTEXT & NEWCONTEXT, RESULT, NEWRESULT>
-    ): Pipeline<CONTEXT & NEWCONTEXT, VALUE, NEWRESULT>;
+    use<MIDDLEWARECONTEXT, MIDDLEWARERETURN = RESULT>(
+        middleware: Middleware<NEXTCONTEXT & Partial<MIDDLEWARECONTEXT>, RESULT, MIDDLEWARERETURN>
+    ): Pipeline<CONTEXT, VALUE, NEXTCONTEXT & MIDDLEWARECONTEXT, MIDDLEWARERETURN>;
 
     use<MIDDLEWARE extends Middleware<any, any, any>>(
         middleware: MIDDLEWARE
-    ): Pipeline<CONTEXT & MiddlewareContext<MIDDLEWARE>, VALUE, MiddlewareReturn<MIDDLEWARE>>;
+    ): Pipeline<CONTEXT, VALUE, NEXTCONTEXT & MiddlewareContext<MIDDLEWARE>, MiddlewareReturn<MIDDLEWARE>>;
 
     use(middleware: any): any {
         this.middlewares.push(middleware);

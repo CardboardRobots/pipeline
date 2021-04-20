@@ -26,7 +26,7 @@ describe('Pipeline', function () {
         });
 
         it('should throw exceptions', async function () {
-            const pipeline = new Pipeline<any, string, string>()
+            const pipeline = new Pipeline<any, string>()
                 .use(async () => {
                     // eslint-disable-next-line no-throw-literal
                     throw 'exception';
@@ -45,6 +45,56 @@ describe('Pipeline', function () {
             pipeline.use(middleware);
             expect(pipeline.middlewares.length).toBe(1);
             expect(pipeline.middlewares[0]).toBe(middleware);
+        });
+
+        it('should support default types', function () {
+            const pipeline = new Pipeline().use(async () => '');
+            pipeline.run({});
+        });
+
+        it('should support chaining', async function () {
+            const pipeline = new Pipeline<unknown, string>()
+                .use(async (_, value) => `${value}b`)
+                .use(async (_, value) => `${value}c`);
+            const { value } = await pipeline.run({}, 'a');
+            expect(value).toBe('abc');
+        });
+
+        it('should support chaining with return changes', async function () {
+            const pipeline = new Pipeline<unknown, string>().use(async (_, value) => parseFloat(value));
+            const { value } = await pipeline.run({}, '1');
+            expect(value).toBe(1);
+        });
+
+        it('should support context expansion', async function () {
+            const pipeline = new Pipeline()
+                .use<{ data: string }>(async (context) => {
+                    context.data = 'test';
+                })
+                .use<{ value: number }>(async (context) => {
+                    context.value = 1;
+                })
+                .use(async ({ data, value }) => {
+                    return data + value;
+                });
+            const { value } = await pipeline.run({});
+            expect(value).toBe('test1');
+        });
+
+        it('should support middleware merging', async function () {
+            const pipeline = new Pipeline()
+                .use(async (context: { data: string }) => {
+                    context.data = 'test';
+                    return '';
+                })
+                .use(async (context: { value: number }) => {
+                    context.value = 1;
+                })
+                .use(async ({ data, value }) => {
+                    return data + value;
+                });
+            const { value } = await pipeline.run({});
+            expect(value).toBe('test1');
         });
     });
 
