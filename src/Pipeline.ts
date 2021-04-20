@@ -26,6 +26,8 @@ export class Pipeline<CONTEXT = {}, VALUE = void, NEXTCONTEXT = CONTEXT, RESULT 
      * Adds a `Middleware` function to the `Pipeline`
      * @param middleware - a `Middleware` function to add
      */
+    use(middleware: Middleware<NEXTCONTEXT, RESULT, RESULT>): this;
+
     use<MIDDLEWARECONTEXT, MIDDLEWARERETURN = RESULT>(
         middleware: Middleware<NEXTCONTEXT & Partial<MIDDLEWARECONTEXT>, RESULT, MIDDLEWARERETURN>
     ): Pipeline<CONTEXT, VALUE, NEXTCONTEXT & MIDDLEWARECONTEXT, MIDDLEWARERETURN>;

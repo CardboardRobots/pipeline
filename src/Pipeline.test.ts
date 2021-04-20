@@ -74,11 +74,15 @@ describe('Pipeline', function () {
                 .use<{ value: number }>(async (context) => {
                     context.value = 1;
                 })
+                .use(async (context) => {
+                    context.data = 'value';
+                    context.value = 2;
+                })
                 .use(async ({ data, value }) => {
                     return data + value;
                 });
             const { value } = await pipeline.run({});
-            expect(value).toBe('test1');
+            expect(value).toBe('value2');
         });
 
         it('should support middleware merging', async function () {
@@ -90,11 +94,15 @@ describe('Pipeline', function () {
                 .use(async (context: { value: number }) => {
                     context.value = 1;
                 })
+                .use(async (context) => {
+                    context.data = 'value';
+                    context.value = 2;
+                })
                 .use(async ({ data, value }) => {
                     return data + value;
                 });
             const { value } = await pipeline.run({});
-            expect(value).toBe('test1');
+            expect(value).toBe('value2');
         });
     });
 
